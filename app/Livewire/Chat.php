@@ -37,7 +37,7 @@ class Chat extends Component
             ->where(function ($q) {
                 $q
                     ->where('sender_id', Auth::id())
-                    ->where('receiver_id', $this->selectedUser->id);
+                    ->where('receiver_id', $this->selectedUser?->id);
             })
             ->orWhere(function ($q) {
                 $q
