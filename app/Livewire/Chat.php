@@ -28,27 +28,29 @@ class Chat extends Component
     public function selectUser($userId): void
     {
         $this->selectedUser = User::find($userId);
-        $this->loadMessages(); 
+        $this->loadMessages();
     }
 
     public function loadMessages(): void
     {
         $this->messages = ChatMessage::query()
-        ->where(function($q) {
-            $q->where('sender_id', Auth::id())
-            ->where('receiver_id', $this->selectedUser->id);
-        })
-        ->orWhere(function($q) {
-            $q->where('sender_id', $this->selectedUser->id)
-            ->where('receiver_id', Auth::id());
-        })
-        ->orderBy('created_at', 'asc')
-        ->get();
+            ->where(function ($q) {
+                $q
+                    ->where('sender_id', Auth::id())
+                    ->where('receiver_id', $this->selectedUser->id);
+            })
+            ->orWhere(function ($q) {
+                $q
+                    ->where('sender_id', $this->selectedUser->id)
+                    ->where('receiver_id', Auth::id());
+            })
+            ->orderBy('created_at', 'asc')
+            ->get();
     }
 
     public function submit(): void
     {
-        if (!$this->newMessage) {
+        if ( ! $this->newMessage) {
             return;
         }
 
@@ -67,7 +69,12 @@ class Chat extends Component
 
     public function updatedNewMessage($value): void
     {
-        $this->dispatch('userTyping', userId: $this->loginId, userName: Auth::user()->name, selectedUserId: $this->selectedUser->id);
+        $this->dispatch(
+            'userTyping',
+            userId: $this->loginId,
+            userName: Auth::user()->name,
+            selectedUserId: $this->selectedUser->id,
+        );
     }
 
     public function getListeners(): array
