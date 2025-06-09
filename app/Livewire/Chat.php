@@ -17,22 +17,21 @@ class Chat extends Component
     public $authId;
     public $loginId;
 
-    public function mount()
+    public function mount(): void
     {
         $this->users = User::where('id', '!=', Auth::id())->latest()->get();
         $this->selectedUser = $this->users->first();
         $this->loadMessages();
-        $this->authId = Auth::id();
-        $this->loginId = $this->selectedUser->id;
+        $this->loginId = Auth::id();
     }
 
-    public function selectUser($userId)
+    public function selectUser($userId): void
     {
         $this->selectedUser = User::find($userId);
         $this->loadMessages(); 
     }
 
-    public function loadMessages()
+    public function loadMessages(): void
     {
         $this->messages = ChatMessage::query()
         ->where(function($q) {
@@ -43,13 +42,15 @@ class Chat extends Component
             $q->where('sender_id', $this->selectedUser->id)
             ->where('receiver_id', Auth::id());
         })
-        ->latest()
+        ->orderBy('created_at', 'asc')
         ->get();
     }
 
-    public function submit()
+    public function submit(): void
     {
-        if (!$this->newMessage) return;
+        if (!$this->newMessage) {
+            return;
+        }
 
         $message = ChatMessage::create([
             'sender_id' => Auth::id(),
@@ -61,22 +62,22 @@ class Chat extends Component
 
         $this->newMessage = '';
 
-        event(new MessageSent($message));
+        broadcast(new MessageSent($message));
     }
 
-    public function updatedNewMessage($value)
+    public function updatedNewMessage($value): void
     {
-        $this->dispatch('userTyping', userId: $this->loginId, userName: Auth::id(), selectedUserId: $this->selectedUser->id);
+        $this->dispatch('userTyping', userId: $this->loginId, userName: Auth::user()->name, selectedUserId: $this->selectedUser->id);
     }
 
-    public function getListeners()
+    public function getListeners(): array
     {
         return [
             "echo-private:chat.{$this->loginId},MessageSent" => 'newChatMessageNotification',
         ];
     }
 
-    public function newChatMessageNotification($message)
+    public function newChatMessageNotification($message): void
     {
         if ($message['sender_id'] === $this->selectedUser->id) {
             $messageObject = ChatMessage::find($message['id']);
@@ -84,12 +85,9 @@ class Chat extends Component
         }
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
-        return view('livewire.chat', [
-            'messages' => [],
-            // 'receiver' => auth()->user(),
-        ]);
+        return view('livewire.chat');
     }
 }
  
