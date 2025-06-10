@@ -5,7 +5,7 @@
         <flux:separator variant="subtle" class="dark:border-zinc-700"/>
     </div>
 
-    <div class="flex h-[800px] text-sm border dark:border-zinc-700 rounded-xl shadow overflow-hidden bg-white dark:bg-zinc-800">
+    <div class="flex h-[600px] text-sm border dark:border-zinc-700 rounded-xl shadow overflow-hidden bg-white dark:bg-zinc-800">
         <!-- Left: User List -->
         <div class="w-[20rem] border-r dark:border-zinc-700 bg-gray-50 dark:bg-zinc-900">
             <div class="p-4 font-bold text-gray-700 dark:text-gray-300 border-b dark:border-zinc-700">Users</div>
