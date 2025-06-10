@@ -32,10 +32,14 @@
             </div>
 
             <!-- Messages -->
-            <div class="flex-1 p-4 overflow-y-auto space-y-2 bg-gray-50 dark:bg-zinc-800">
-                @foreach ($messages as $message)
-                    <div class="flex {{ $message->sender_id === Auth::id() ? 'justify-end' : 'justify-start' }}">
-                        <div class="max-w-xs px-4 py-2 rounded-2xl shadow {{ $message->sender_id === Auth::id() ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-zinc-700 text-gray-800 dark:text-gray-200' }}">
+            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-2 bg-gray-50 dark:bg-zinc-800">
+                @foreach ($messages as $i => $message)
+                    <div
+                        class="flex {{ $message->sender_id === Auth::id() ? 'justify-end' : 'justify-start' }}">
+                        <div
+                            class="max-w-xs px-4 py-2 rounded-2xl shadow {{ $message->sender_id === Auth::id() ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-zinc-700 text-gray-800 dark:text-gray-200' }}"
+                            @if($loop->last) id="last-message" @endif
+                        >
                             {{ $message->message }}
                         </div>
                     </div>
@@ -81,4 +85,13 @@
         });
 
     })
+
+    document.addEventListener('chat-message-added', () => {
+        setTimeout(() => {
+            const last = document.getElementById('last-message');
+            if (last) {
+                last.scrollIntoView({ behavior: 'auto', block: 'end' });
+            }
+        }, 30);
+    });
 </script>

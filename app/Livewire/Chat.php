@@ -28,7 +28,10 @@ class Chat extends Component
     public function selectUser($userId): void
     {
         $this->selectedUser = User::find($userId);
+        
         $this->loadMessages();
+
+        $this->dispatch('chat-message-added');
     }
 
     public function loadMessages(): void
@@ -65,6 +68,8 @@ class Chat extends Component
         $this->newMessage = '';
 
         broadcast(new MessageSent($message));
+
+        $this->dispatch('chat-message-added');
     }
 
     public function updatedNewMessage($value): void
@@ -90,6 +95,8 @@ class Chat extends Component
             $messageObject = ChatMessage::find($message['id']);
             $this->messages->push($messageObject);
         }
+
+        $this->dispatch('chat-message-added');
     }
 
     public function render(): \Illuminate\Contracts\View\View
